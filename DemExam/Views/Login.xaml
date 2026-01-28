@@ -1,0 +1,20 @@
+﻿<Window x:Class="DemExam.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DemExam"
+        mc:Ignorable="d"
+        Title="Авторизация" Height="450" Width="800">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="250">
+            <TextBlock Text="Авторизация" Margin="40 10" TextAlignment="Center"/>
+            <TextBox Name="LoginEnter" Margin="20 10"/>
+            <PasswordBox Name="PasswordEnter" Margin="20 10"/>
+            <Button Name="LoginButton" Content="Войти" Margin="40 10"
+                    Click="LoginButton_Click"/>
+            <TextBlock HorizontalAlignment="Center" Text="Войти как гость" FontSize="13" Foreground="Blue"
+                        MouseDown="TextBlock_MouseDown"/>
+        </StackPanel>
+    </Grid>
+</Window>
