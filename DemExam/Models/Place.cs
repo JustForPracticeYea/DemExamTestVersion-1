@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace DemExam.Models;
 
-public partial class Auditorium
+public partial class Place
 {
     public int Id { get; set; }
 
-    public string AuditoriumName { get; set; } = null!;
+    public string? AuditoriumNumber { get; set; }
 
     public int? IdOffice { get; set; }
 

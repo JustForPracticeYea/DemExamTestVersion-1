@@ -2,6 +2,7 @@
 using DemExam.Models;
 using DemExam.Statics;
 using DemExam.Views;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 using System.Windows.Input;
 
@@ -30,7 +31,9 @@ namespace DemExam
             string login = LoginEnter.Text;
             string password = PasswordEnter.Password;
 
-            var user = _context.Workers.Where(u => u.Login == login && u.Password == password).FirstOrDefault();
+            var user = _context.Workers.Where(u => u.Login == login && u.Password == password)
+                .Include(u => u.IdPostNavigation)
+                .FirstOrDefault();
             if (user == null)
             {
                 _message.ShowError("Введён не правильный логин или пароль");

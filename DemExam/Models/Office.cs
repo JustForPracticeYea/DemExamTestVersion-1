@@ -11,11 +11,11 @@ public partial class Office
 
     public string ShortName { get; set; } = null!;
 
-    public int? IdWorker { get; set; }
+    public int? IdDesignatedWorker { get; set; }
 
-    public virtual ICollection<Auditorium> Auditoria { get; set; } = new List<Auditorium>();
+    public virtual Worker? IdDesignatedWorkerNavigation { get; set; }
 
-    public virtual Worker? IdWorkerNavigation { get; set; }
+    public virtual ICollection<Place> Places { get; set; } = new List<Place>();
 
     public virtual ICollection<Worker> Workers { get; set; } = new List<Worker>();
 }

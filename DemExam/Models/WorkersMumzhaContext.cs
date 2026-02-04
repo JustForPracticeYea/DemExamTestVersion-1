@@ -15,11 +15,11 @@ public partial class WorkersMumzhaContext : DbContext
     {
     }
 
-    public virtual DbSet<Auditorium> Auditoria { get; set; }
-
     public virtual DbSet<Equipment> Equipment { get; set; }
 
     public virtual DbSet<Office> Offices { get; set; }
+
+    public virtual DbSet<Place> Places { get; set; }
 
     public virtual DbSet<Post> Posts { get; set; }
 
@@ -31,29 +31,17 @@ public partial class WorkersMumzhaContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Auditorium>(entity =>
-        {
-            entity.ToTable("Auditorium");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.AuditoriumName).HasMaxLength(255);
-            entity.Property(e => e.Floor).HasMaxLength(255);
-
-            entity.HasOne(d => d.IdOfficeNavigation).WithMany(p => p.Auditoria)
-                .HasForeignKey(d => d.IdOffice)
-                .HasConstraintName("FK_Auditorium_Office");
-        });
-
         modelBuilder.Entity<Equipment>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.InventoryNumber, "IX_Equipment").IsUnique();
+
             entity.Property(e => e.InventoryNumber).HasMaxLength(255);
             entity.Property(e => e.NameEquipment).HasMaxLength(255);
             entity.Property(e => e.Photo).HasMaxLength(255);
             entity.Property(e => e.TransferToCompanyBalanceDate).HasColumnType("datetime");
 
-            entity.HasOne(d => d.IdAuditoriumNavigation).WithMany(p => p.Equipment)
-                .HasForeignKey(d => d.IdAuditorium)
+            entity.HasOne(d => d.IdPlaceNavigation).WithMany(p => p.Equipment)
+                .HasForeignKey(d => d.IdPlace)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Equipment_Auditorium");
         });
@@ -62,26 +50,36 @@ public partial class WorkersMumzhaContext : DbContext
         {
             entity.ToTable("Office");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.FullName).HasMaxLength(255);
             entity.Property(e => e.ShortName).HasMaxLength(255);
 
-            entity.HasOne(d => d.IdWorkerNavigation).WithMany(p => p.Offices)
-                .HasForeignKey(d => d.IdWorker)
+            entity.HasOne(d => d.IdDesignatedWorkerNavigation).WithMany(p => p.Offices)
+                .HasForeignKey(d => d.IdDesignatedWorker)
                 .HasConstraintName("FK_Office_Workers");
+        });
+
+        modelBuilder.Entity<Place>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Auditorium");
+
+            entity.Property(e => e.AuditoriumNumber).HasMaxLength(255);
+            entity.Property(e => e.Floor).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdOfficeNavigation).WithMany(p => p.Places)
+                .HasForeignKey(d => d.IdOffice)
+                .HasConstraintName("FK_Auditorium_Office");
         });
 
         modelBuilder.Entity<Post>(entity =>
         {
             entity.ToTable("Post");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.PostName).HasMaxLength(255);
+            entity.Property(e => e.SalaryAmount).HasColumnType("money");
         });
 
         modelBuilder.Entity<Worker>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Login).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(255);
             entity.Property(e => e.Password).HasMaxLength(255);

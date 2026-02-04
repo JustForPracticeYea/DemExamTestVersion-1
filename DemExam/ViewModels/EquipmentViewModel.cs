@@ -20,17 +20,18 @@ namespace DemExam.ViewModels
             StandartTimeLimit = equipment.StandartTimeLimit;
             NameEquipment = equipment.NameEquipment;
             Description = equipment.Description;
-            IdAuditoriumNavigation = equipment.IdAuditoriumNavigation;
+            IdPlaceNavigation = equipment.IdPlaceNavigation;
 
-            GetStatus();
-            GetUserRole();
-            GetPhoto();
+            SetStatus();
+            SetAuditoriumVisibility();
+            SetEquipmentStatusVisibilityToUser();
+            SetPhoto();
         }
         public int Id { get; set; }
 
         public string InventoryNumber { get; set; } = null!;
 
-        public int Weight { get; set; }
+        public double Weight { get; set; }
 
         public DateTime TransferToCompanyBalanceDate { get; set; }
 
@@ -42,9 +43,10 @@ namespace DemExam.ViewModels
 
         public string Description { get; set; } = null!;
 
-        public Auditorium IdAuditoriumNavigation { get; set; } = null!;
+        public Place IdPlaceNavigation { get; set; } = null!;
 
         public Visibility Visibility { get; set; }
+        public Visibility AuditoriumVisibility { get; set; }
 
         public Brush Background { get; set; }
 
@@ -52,16 +54,23 @@ namespace DemExam.ViewModels
 
         public string FullName { get; set; }
 
-        private void GetStatus()
+        private void SetStatus()
         {
             var lifeTime = TransferToCompanyBalanceDate.AddYears(StandartTimeLimit);
-            if(lifeTime < DateTime.Now)
+            if(lifeTime.Year < DateTime.Now.Year)
             {
-                Background = (Brush)new BrushConverter().ConvertFromString("#E32636");
-                Text = "На списание";
+                if (IdPlaceNavigation.IdOfficeNavigation.ShortName == "Склад")
+                {
+                    Text = "Списано";
+                }
+                else
+                {
+                    Background = (Brush)new BrushConverter().ConvertFromString("#E32636");
+                    Text = "На списание";
+                }
                 return;
             }
-            else if(lifeTime > DateTime.Now && lifeTime.Year == DateTime.Now.Year)
+            else if(lifeTime.Year == DateTime.Now.Year)
             {
                 Background = (Brush)new BrushConverter().ConvertFromString("#FFA500");
                 Text = "Срок службы истекает в этом году";
@@ -72,21 +81,38 @@ namespace DemExam.ViewModels
             }
         }
 
-        private void GetUserRole()
+        private void SetAuditoriumVisibility()
         {
-            if(CurrentSession.CurrentUser != null && CurrentSession.CurrentUser.IdPost == 6)
+            if (IdPlaceNavigation == null)
+            {
+                AuditoriumVisibility = Visibility.Collapsed;
+                return;
+            }
+            if (string.IsNullOrEmpty(IdPlaceNavigation.AuditoriumNumber))
+            {
+                AuditoriumVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                AuditoriumVisibility = Visibility.Visible;
+            }
+        }
+
+        private void SetEquipmentStatusVisibilityToUser()
+        {
+            if (CurrentSession.CurrentUser != null && CurrentSession.CurrentUser.IdPost == 6)
             {
                 Visibility = Visibility.Visible;
             }
-            else if(CurrentSession.CurrentUser != null && (CurrentSession.CurrentUser.IdPost == 4 || CurrentSession.CurrentUser.IdPost == 5))
+            else if (CurrentSession.CurrentUser != null && (CurrentSession.CurrentUser.IdPost == 4 || CurrentSession.CurrentUser.IdPost == 5 ))
             {
-                if (IdAuditoriumNavigation.IdOffice == CurrentSession.CurrentUser.IdOffice)
+                if (IdPlaceNavigation.IdOffice == CurrentSession.CurrentUser.IdOffice)
                 {
                     Visibility = Visibility.Visible;
                 }
-                else 
-                { 
-                    Visibility = Visibility.Collapsed; 
+                else
+                {
+                    Visibility = Visibility.Collapsed;
                 }
             }
             else
@@ -95,7 +121,7 @@ namespace DemExam.ViewModels
             }
         }
 
-        private void GetPhoto()
+        private void SetPhoto()
         {
             if(!string.IsNullOrEmpty(Photo))
             {

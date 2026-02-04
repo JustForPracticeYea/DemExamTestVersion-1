@@ -37,7 +37,31 @@ namespace DemExam.Views
 
         private void LoadEquipment()
         {
-            var equipment = _context.Equipment.Include(w => w.IdAuditoriumNavigation).ThenInclude(w => w.IdOfficeNavigation).ToList();
+            List<Equipment> equipment = _context.Equipment.Include(w => w.IdPlaceNavigation).
+                ThenInclude(w => w.IdOfficeNavigation)
+                .Where(w => w.IdPlaceNavigation.IdOfficeNavigation.ShortName == "Общее подразделение")
+                .ToList();
+            if (CurrentSession.CurrentUser != null)
+            {
+                if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Лаборант")
+                {
+                    equipment = _context.Equipment
+                        .Where(w => CurrentSession.CurrentUser.IdOffice == w.IdPlaceNavigation.IdOffice)
+                        .ToList();
+                }
+                if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Техник" || CurrentSession.CurrentUser.IdPostNavigation.PostName.Contains("заведующий"))
+                {
+                    equipment = _context.Equipment.Include(w => w.IdPlaceNavigation)
+                        .ThenInclude(w => w.IdOfficeNavigation)
+                        .Where(w => CurrentSession.CurrentUser.IdOffice == w.IdPlaceNavigation.IdOffice).ToList();
+                }
+                if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Инженер" || CurrentSession.CurrentUser.IdPostNavigation.PostName == "администратор бд")
+                {
+                    equipment = _context.Equipment.Include(w => w.IdPlaceNavigation)
+                        .ThenInclude(w => w.IdOfficeNavigation)
+                        .ToList();
+                }
+            }
             List<EquipmentViewModel> equipmentViewModels = new List<EquipmentViewModel>();
             foreach(var item in equipment)
             {
@@ -57,7 +81,7 @@ namespace DemExam.Views
         {
             if (CurrentSession.CurrentUser != null)
             {
-                FullName.Text =  CurrentSession.CurrentUser.Surname + CurrentSession.CurrentUser.Name + CurrentSession.CurrentUser.Patronymic;
+                FullName.Text =  CurrentSession.CurrentUser.Surname + " " + CurrentSession.CurrentUser.Name + " " + CurrentSession.CurrentUser.Patronymic;
             }
             else
             {

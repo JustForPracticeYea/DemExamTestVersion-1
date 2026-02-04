@@ -9,19 +9,19 @@ public partial class Equipment
 
     public string InventoryNumber { get; set; } = null!;
 
-    public int Weight { get; set; }
+    public double Weight { get; set; }
 
     public DateTime TransferToCompanyBalanceDate { get; set; }
 
-    public string Photo { get; set; } = null!;
+    public string? Photo { get; set; }
 
     public int StandartTimeLimit { get; set; }
 
     public string NameEquipment { get; set; } = null!;
 
-    public int IdAuditorium { get; set; }
+    public int IdPlace { get; set; }
 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
 
-    public virtual Auditorium IdAuditoriumNavigation { get; set; } = null!;
+    public virtual Place IdPlaceNavigation { get; set; } = null!;
 }

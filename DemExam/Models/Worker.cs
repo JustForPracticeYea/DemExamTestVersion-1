@@ -13,7 +13,7 @@ public partial class Worker
 
     public string? Patronymic { get; set; }
 
-    public int BirthDate { get; set; }
+    public int BirthYear { get; set; }
 
     public int IdPost { get; set; }
 

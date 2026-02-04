@@ -9,7 +9,7 @@ public partial class Post
 
     public string PostName { get; set; } = null!;
 
-    public int SalaryAmount { get; set; }
+    public decimal SalaryAmount { get; set; }
 
     public virtual ICollection<Worker> Workers { get; set; } = new List<Worker>();
 }
