@@ -7,27 +7,65 @@
         mc:Ignorable="d"
         Title="Оборудование" Height="800" Width="1200">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="47*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         
-        <Grid Grid.Row="0" Background="#FFA500">
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="#FFA500">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0" Source="/Res/logo.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30 0 0 0" Width="50" Height="50"/>
-            <TextBlock Grid.Column="1" Name="FullName" Text="{Binding FullName}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <TextBlock Grid.Column="1" Name="FullName" VerticalAlignment="Center" HorizontalAlignment="Right"/>
             <Button Name="LogoutButton" Content="Выйти" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0"
                 Click="LogoutButton_Click"/>
         </Grid>
 
-        <ScrollViewer Grid.Row="1">
-            <ItemsControl Name="EquipmentList">
-                <ItemsControl.ItemTemplate>
+        <!--Поиск, сортировка, фильтр-->
+        <StackPanel x:Name="ControlPanel" Orientation="Horizontal" Grid.Row="1" Grid.Column="1"
+             HorizontalAlignment="Left" 
+             Margin="158,5,0,5">
+            <TextBox HorizontalAlignment="Center"
+              Height="40"
+              Name="SearchTextBox"
+              BorderBrush="Black"
+              BorderThickness="1"
+              Width="300"
+              TextChanged="OnSearchTextChanged">
+            </TextBox>
+
+            <ComboBox Name="SortComboBox"
+               Width="200" 
+               Margin="5"
+               VerticalAlignment="Center"
+               SelectionChanged="OnFilterChanged"/>
+
+            <ComboBox Name="FilterComboBox"
+               Width="200"
+               Margin="5,0"
+               VerticalAlignment="Center"
+               SelectionChanged="OnFilterOfficeChanged"/>
+
+            <Button Name="ButtonCreateEquipment"
+                 Content="Добавить"
+                 Width="100"
+                 Margin="40 0"
+                 Height="50"
+                 Click="CreateEquipmentButton_Click"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" Grid.Column="1" Width="1000">
+            <ListBox Name="EquipmentList"
+                     SelectionChanged="EquipmentListSelectionChanged">
+                <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="10" Tag="{Binding Id}" BorderThickness="1" BorderBrush="Black" Width="860">
                             <Grid HorizontalAlignment="Center">
@@ -36,7 +74,7 @@
                                     <ColumnDefinition Width="600"/>
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.Column="0" Width="250" Height="250" Margin="15 0" HorizontalAlignment="Center">
-                                    <Image Source="{Binding Photo}"/>
+                                    <Image Source="{Binding ImageSource}"/>
                                 </Border>
                                 <StackPanel Grid.Column="1" Margin="20 0">
                                     <TextBlock FontWeight="SemiBold" Margin="0 15" VerticalAlignment="Center" Text="{Binding NameEquipment}"/>
@@ -58,8 +96,8 @@
                             </Grid>
                         </Border>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </ScrollViewer>
     </Grid>
 </Window>

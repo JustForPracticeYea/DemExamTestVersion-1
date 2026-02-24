@@ -2,6 +2,7 @@
 using DemExam.Statics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -25,17 +26,27 @@ namespace DemExam.ViewModels
             SetStatus();
             SetAuditoriumVisibility();
             SetEquipmentStatusVisibilityToUser();
-            SetPhoto();
         }
+
         public int Id { get; set; }
 
         public string InventoryNumber { get; set; } = null!;
-
         public double Weight { get; set; }
 
         public DateTime TransferToCompanyBalanceDate { get; set; }
 
-        public string Photo { get; set; } = null!;
+        public string Photo { get; set; }
+
+        public string PhotoPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Photo))
+                    return $"/Res/{Photo}";
+
+                return $"/Res/stub.jpg";
+            }
+        }
 
         public int StandartTimeLimit { get; set; }
 
@@ -52,7 +63,7 @@ namespace DemExam.ViewModels
 
         public string Text { get; set; }
 
-        public string FullName { get; set; }
+        public ImageSource ImageSource { get; set; }
 
         private void SetStatus()
         {
@@ -100,11 +111,11 @@ namespace DemExam.ViewModels
 
         private void SetEquipmentStatusVisibilityToUser()
         {
-            if (CurrentSession.CurrentUser != null && CurrentSession.CurrentUser.IdPost == 6)
+            if (CurrentSession.CurrentUser != null && CurrentSession.CurrentUser.IdPostNavigation.PostName == "администратор бд")
             {
                 Visibility = Visibility.Visible;
             }
-            else if (CurrentSession.CurrentUser != null && (CurrentSession.CurrentUser.IdPost == 4 || CurrentSession.CurrentUser.IdPost == 5 ))
+            else if (CurrentSession.CurrentUser != null && (CurrentSession.CurrentUser.IdPostNavigation.PostName == "заведующий лабораторией" || CurrentSession.CurrentUser.IdPostNavigation.PostName == "заведующий складом"))
             {
                 if (IdPlaceNavigation.IdOffice == CurrentSession.CurrentUser.IdOffice)
                 {
@@ -118,18 +129,6 @@ namespace DemExam.ViewModels
             else
             {
                 Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void SetPhoto()
-        {
-            if(!string.IsNullOrEmpty(Photo))
-            {
-                Photo = "/Res/" + Photo;
-            }
-            else
-            {
-                Photo = "/Res/stub.jpg";
             }
         }
     }
