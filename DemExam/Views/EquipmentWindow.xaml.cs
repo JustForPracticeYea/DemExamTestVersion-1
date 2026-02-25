@@ -1,4 +1,5 @@
-﻿using DemExam.Models;
+﻿using DemExam.Helpers;
+using DemExam.Models;
 using DemExam.Statics;
 using DemExam.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace DemExam.Views
     {
         private WorkersMumzhaContext _context = new WorkersMumzhaContext();
         private List<EquipmentViewModel> _equipmentViewModels = new();
+        MessageHelper messageHelper = new MessageHelper();
         public EquipmentWindow()
         {
             InitializeComponent();
@@ -60,7 +62,7 @@ namespace DemExam.Views
                         .ToList();
                     ControlPanel.Visibility = Visibility.Collapsed;
                 }
-                if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Техник" || CurrentSession.CurrentUser.IdPostNavigation.PostName.Contains("заведующий"))
+                else if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Техник" || CurrentSession.CurrentUser.IdPostNavigation.PostName.Contains("заведующий"))
                 {
                     equipment = _context.Equipment.Include(w => w.IdPlaceNavigation)
                         .ThenInclude(w => w.IdOfficeNavigation)
@@ -72,7 +74,7 @@ namespace DemExam.Views
                     if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Техник")
                         ControlPanel.Visibility = Visibility.Collapsed;
                 }
-                if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Инженер" || CurrentSession.CurrentUser.IdPostNavigation.PostName == "администратор бд")
+                else if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "Инженер" || CurrentSession.CurrentUser.IdPostNavigation.PostName == "администратор бд")
                 {
                     equipment = _context.Equipment.Include(w => w.IdPlaceNavigation)
                         .ThenInclude(w => w.IdOfficeNavigation)
@@ -80,6 +82,16 @@ namespace DemExam.Views
 
                     if (CurrentSession.CurrentUser.IdPostNavigation.PostName == "инженер")
                         ButtonCreateEquipment.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    messageHelper.ShowInfo("Вы вошли под неизвестной программе ролью. Права ограничены");
+                    equipment = _context.Equipment.Include(w => w.IdPlaceNavigation).
+                        ThenInclude(w => w.IdOfficeNavigation)
+                        .Where(w => w.IdPlaceNavigation.IdOfficeNavigation.ShortName == "Общее подразделение")
+                        .ToList();
+                    ControlPanel.Visibility = Visibility.Collapsed;
+                    EquipmentList.IsEnabled = false;
                 }
             }
             foreach(var item in equipment)
@@ -147,6 +159,7 @@ namespace DemExam.Views
 
                 }
             }
+            EquipmentList.SelectedItem = null;
         }
 
         private void CreateEquipmentButton_Click(object sender, RoutedEventArgs e)

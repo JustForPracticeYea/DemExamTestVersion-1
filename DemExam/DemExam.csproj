@@ -34,13 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Res\coffee.jpg" />
-    <Resource Include="Res\icon.ico" />
-    <Resource Include="Res\logo.png" />
-    <Resource Include="Res\stub.jpg">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Res\table.jpg" />
+	  <Content Include="Res\**">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
 </Project>
